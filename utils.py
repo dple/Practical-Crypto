@@ -152,7 +152,7 @@ def factor(n):
 
 def tests():
     n = randint(2, 100000)
-    b = randint(2, 63)      # random int <=63 as we work with int64
+    b = randint(2, 63)      
 
     print("Factors of {} is {}".format(n, factor(n)))
     print("{} raise to power {} mod {} is {}:".format(2, n - 1, n, powmod(2, n - 1, n)))

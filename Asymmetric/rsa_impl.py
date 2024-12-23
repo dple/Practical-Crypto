@@ -1,6 +1,6 @@
 import random 
 from math import gcd
-from sympy import isprime, nextprime
+from sympy import nextprime
 from padding import *
 
 '''
