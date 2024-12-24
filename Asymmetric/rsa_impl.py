@@ -95,8 +95,7 @@ if __name__ == '__main__':
 
     ciphertext = rsa.encrypt(txt)
 
-    print("Ciphertext: ", ciphertext, "\n")
-    #print("Ciphertext: ", ciphertext.decode('utf-8', "ignore"))
+    print("Ciphertext: ", ciphertext.hex(), "\n")    
 
     plaintext = rsa.decrypt(ciphertext)
 
