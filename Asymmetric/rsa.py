@@ -17,14 +17,14 @@ private_pem = private_key.private_bytes(
     format=serialization.PrivateFormat.TraditionalOpenSSL,
     encryption_algorithm=serialization.NoEncryption()
 )
-print("Serializing private key: ", private_pem)
+print("Serializing private key: ", private_pem, "\n")
 
 public_pem = public_key.public_bytes(
     encoding=serialization.Encoding.PEM,
     format=serialization.PublicFormat.SubjectPublicKeyInfo
 )
 
-print("Serializing public key: ", public_pem)
+print("Serializing public key: ", public_pem, "\n")
 
 # Encryption
 message = b"Secret message"
@@ -47,5 +47,5 @@ plaintext = private_key.decrypt(
     )
 )
 
-print("Original message:", message)
+print("Original message:", message, "\n")
 print("Decrypted message:", plaintext)
