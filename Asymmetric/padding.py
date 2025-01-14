@@ -107,12 +107,15 @@ def pkcs7_pad(message, block_size):
 
 
 def pkcs7_unpad(padded_message, block_size):
-     if len(padded_message) % block_size != 0:
-         raise ValueError("Invalid PKCS#7 padding.")
+    if len(padded_message) % block_size != 0:
+        raise ValueError("Invalid PKCS#7 padding.")
      
-     padding_length = padded_message[-1]
+    padding_length = padded_message[-1]
+    assert padding_length > 0
+    pad = padded_message[-padding_length:]
+    assert all(x == padding_length for x in pad)
 
-     return padded_message[:len(padded_message) - padding_length]
+    return padded_message[:-padding_length]
 
 
 '''
