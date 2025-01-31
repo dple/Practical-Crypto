@@ -7,30 +7,35 @@ import oqs
 # KEM example
 #######################################################################
 
-kems = oqs.get_enabled_KEM_mechanisms()
 
+print("liboqs version:", oqs.oqs_version())
+print("liboqs-python version:", oqs.oqs_python_version())
 print("Enabled KEM mechanisms:")
-pprint(kems, compact="True")
+kems = oqs.get_enabled_kem_mechanisms()
+pprint(kems, compact=True)
 
-# create client and server with sample KEM mechanisms
-kemalg = "Kyber512"
+# Create client and server with sample KEM mechanisms
+kemalg = "ML-KEM-1024"
 with oqs.KeyEncapsulation(kemalg) as client:
     with oqs.KeyEncapsulation(kemalg) as server:
         print("\nKey encapsulation details:")
         pprint(client.details)
 
-        # client generates its keypair
-        public_key = client.generate_keypair()
-        # optionally, the secret key can be obtained by calling export_secret_key()
-        # and the client can later be re-instantiated with the key pair:
-        # secret_key = client.export_secret_key()
-        # store key pair, wait... (session resumption):
-        # client = oqs.KeyEncapsulation(kemalg, secret_key)
+        # Generate key pair
+        public_key_client = client.generate_keypair()
+        print("Public Key:", public_key_client.hex())
 
-        # the server encapsulates its secret using the client's public key
-        ciphertext, shared_secret_server = server.encap_secret(public_key)
+        # Server encapsulate (encrypt) a shared secret using the client's public key
+        ciphertext, shared_secret_enc = server.encap_secret(public_key_client)
+        print("Ciphertext:", ciphertext.hex())
+        print("Encapsulated Shared Secret:", shared_secret_enc.hex())
 
-        # the client decapsulates the the server's ciphertext to obtain the shared secret
-        shared_secret_client = client.decap_secret(ciphertext)
+        # Client decapsulate (decrypt) to get the shared secret
+        shared_secret_dec = client.decap_secret(ciphertext)
+        print("Decapsulated Shared Secret:", shared_secret_dec.hex())
 
-        print("\nShared secretes coincide:", shared_secret_client == shared_secret_server)
+        # Verify both parties have the same secret
+        assert shared_secret_enc == shared_secret_dec
+        print("Key exchange successful!")
+        client.free()
+        server.free()

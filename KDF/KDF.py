@@ -23,9 +23,9 @@ if __name__ == '__main__':
     iter = 10       # iterations
     parallelism = 4
     memory_cost = 64*1024   # 64 MB
-    print("Key derived from Argon2", argon2(pwd, salt, len, iter, parallelism, memory_cost))
-    print("Key derived from PKKDF2", pbkdf2(pwd, len, salt, iter))
-    print("Key derived from Scrypt", scrypt(pwd, salt, len, parallelism))
+    print("Key derived from Argon2", argon2(pwd, salt, len, iter, parallelism, memory_cost).hex())
+    print("Key derived from PKKDF2", pbkdf2(pwd, len, salt, iter).hex())
+    print("Key derived from Scrypt", scrypt(pwd, salt, len, parallelism).hex())
 
     
 

@@ -14,25 +14,20 @@ pprint(sigs, compact="True")
 
 message = "This is the message to sign".encode()
 
-# create signer and verifier with sample signature mechanisms
-sigalg = "Dilithium2"
-with oqs.Signature(sigalg) as signer:
-    with oqs.Signature(sigalg) as verifier:
-        print("\nSignature details:")
-        pprint(signer.details)
+sigalg = "Dilithium5"
 
-        # signer generates its keypair
-        signer_public_key = signer.generate_keypair()
-        # optionally, the secret key can be obtained by calling export_secret_key()
-        # and the signer can later be re-instantiated with the key pair:
-        # secret_key = signer.export_secret_key()
-        # store key pair, wait... (session resumption):
-        # signer = oqs.Signature(sigalg, secret_key)
+sig = oqs.Signature(sigalg)
+print("\nSignature details:")
+pprint(sig.details)
 
-        # signer signs the message
-        signature = signer.sign(message)
+# Generate key pair
+public_key = sig.generate_keypair()
+print(sigalg, "'s Public key:\n", public_key.hex())
 
-        # verifier verifies the signature
-        is_valid = verifier.verify(message, signature, signer_public_key)
+signature = sig.sign(message=message)
+print("\nSignature:\n", signature.hex())
 
-        print("\nValid signature?", is_valid)
+# Verify the signature
+is_valid = sig.verify(message, signature, public_key)
+
+print("\nValid signature?", is_valid)
