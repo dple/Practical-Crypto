@@ -1,5 +1,11 @@
 """
-DH Key exchange using Curve 25519
+DH Key exchange using Curve25519, a Montgomery curve
+    y^2 = x^3 + 486662x^2 + x, birationally equivalent to twisted Edwards curve Ed25519 used for digital signature
+    Fq: q = 2^255 - 19
+
+Note: In Python, cryptography package supports X25519 and X448 for key exchange. 
+      They works exactly the same, but just different curves, and hence different security level
+
 """
 
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
@@ -15,10 +21,10 @@ def generate_keys():
     return private_key, public_key
 
 def export_private_key(private_key):
-    ''' Export private key as PEM '''
+    
     private_pem = private_key.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.PKCS8,
+        encoding=serialization.Encoding.PEM,                # Export private key as PEM 
+        format=serialization.PrivateFormat.PKCS8,           # PKCS#8: a standard syntax for storing private key information
         encryption_algorithm=serialization.NoEncryption()
     )
 
@@ -65,7 +71,11 @@ if __name__ == '__main__':
     shared_key_B = derive_shared_key(private_key_B, public_key_A)
 
     assert shared_key_A == shared_key_B, "Shared secrets do not match!"
-    hkdf = HKDF(algorithm=hashes.SHA256(), length=32, salt=os.urandom(16), info=b'DH Key Exchange')
-    derived_key = hkdf.derive(shared_key_A)
+    derived_key = HKDF(
+        algorithm=hashes.SHA256(), 
+        length=32, 
+        salt=os.urandom(16), 
+        info=b'DH Key Exchange'
+        ).derive(shared_key_A)
 
     print("Shared secret:\n", derived_key.hex())  
