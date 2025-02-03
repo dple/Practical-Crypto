@@ -62,7 +62,9 @@ if __name__ == '__main__':
 
     # Generate a signature using private key
     message = "This is a EdDSA using Curve25519!"    
-    message_encoded = message.encode()
+    # Convert a string into a bytes-object 
+    message_encoded = bytes(message, 'utf-8') #or simply use encode() method: message.encode()
+    print(message_encoded)
     sig = signature_generation(message_encoded, private_key)
 
 

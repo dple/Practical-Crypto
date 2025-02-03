@@ -35,8 +35,9 @@ print("Serializing public key: ", public_pem, "\n")
 message = b"Secret message"
 ciphertext = public_key.encrypt(
     message,
-    padding.OAEP(
-        mgf=padding.MGF1(algorithm=hashes.SHA256()),        # pad the plaintext using OAEP
+    padding.OAEP(                                       # for encryption, RSA pad the plaintext using OAEP
+                                                        # https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding
+        mgf=padding.MGF1(algorithm=hashes.SHA256()),        
         algorithm=hashes.SHA256(),
         label=None
     )
@@ -55,7 +56,8 @@ plaintext = private_key.decrypt(
 # Sign the message 
 sig = private_key.sign(
     message,
-    padding.PSS(
+    padding.PSS(                                # For signing a message, RSA uses the PSS padding scheme
+                                                # https://en.wikipedia.org/wiki/Probabilistic_signature_scheme
         mgf=padding.MGF1(hashes.SHA256()), 
         salt_length=padding.PSS.MAX_LENGTH),
     algorithm=hashes.SHA256()
