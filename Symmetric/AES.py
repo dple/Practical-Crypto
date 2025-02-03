@@ -13,7 +13,10 @@ class AES:
         self.cipher = Cipher(algorithms.AES(self.key), modes.CBC(self.iv))
 
     def padding(self, data):        
-        padder = padding.PKCS7(128).padder()    # 128 = 16 bytes of block size
+        padder = padding.PKCS7(128).padder()            # PKCS#7 padding is for symmetric block cipher, works by appending N bytes with the value of chr(N), 
+                                                        # where N is the number of bytes required to make the final block of data the same size as the block size. 
+                                                        # E.g., AES block size is 128 bit or 16 bytes. A message of 21 bytes will be padded 11 bytes
+                                                        # See more details in file ../Encode/padding.py
         data = data.encode(encoding='utf-8')
         return padder.update(data) + padder.finalize()
 
