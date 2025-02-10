@@ -64,9 +64,10 @@ def ANXI_X9_23_unpad(padded_message, block_size):
 
 
 '''
-The value of each added byte is the number of bytes that are added, i.e. N bytes, each of value N are added
-- 4 bytes added as the below example:
-    ... | DD DD DD DD DD DD DD DD | DD DD DD DD 04 04 04 04 |
+PKCS#7 padding is for symmetric block cipher, works by appending N bytes with the value of chr(N), 
+where N is the number of bytes required to make the final block of data the same size as the block size. 
+E.g., AES block size is 128 bit or 16 bytes. A message of 12 bytes will be padded 04 bytes as the below example:
+    DD DD DD DD DD DD DD DD | DD DD DD DD 04 04 04 04 |
 '''
 def pkcs7_pad(message, block_size):
     message_bytes = message.encode('utf-8')

@@ -1,7 +1,7 @@
 import random 
 from math import gcd
 from sympy import nextprime
-from Encode.SymmetricPadding import *
+from Encode.AsymmetricPadding import *
 
 '''
 Compute modular inverse a^(-1) mod n using extended Euclidean algorithm  
