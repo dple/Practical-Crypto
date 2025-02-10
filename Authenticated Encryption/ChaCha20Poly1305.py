@@ -1,3 +1,8 @@
+'''
+The ChaCha20Poly1305 authenticated encryption is defined in RFC 7539. 
+It is a stream cipher combined with a MAC that offers strong integrity guarantees.
+'''
+
 from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
 import os 
 

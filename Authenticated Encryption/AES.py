@@ -27,23 +27,24 @@ if __name__ == '__main__':
 
     assert plaintext == decrypted_text, "Decrypted message does not match!"
 
-    # AES-GCM-SIV mode
-    key = AESGCMSIV.generate_key(bit_length=256)
+    # AES-GCM-SIV mode (SIV = Synthetic Initialization Vector), defined in RFC 8452
+    key = AESGCMSIV.generate_key(bit_length=256)        # Key could be 128, 192 or 256 bits
     aesgcmsiv = AESGCMSIV(key)
 
-    ciphertext = aesgcmsiv.encrypt(nonce=nonce, data=plaintext, associated_data=ad)
+    # nonce is 12 bytes as GCM mode
+    ciphertext = aesgcmsiv.encrypt(nonce=nonce, data=plaintext, associated_data=ad)     
     print("Ciphertext using AES-GCMSIV-256 (hex): ", ciphertext.hex())
-    assert len(plaintext) + 16 == len(ciphertext)       
+    assert len(plaintext) + 16 == len(ciphertext)       # 16 bytes of tag 
 
     decrypted_text = aesgcmsiv.decrypt(nonce=nonce, data=ciphertext, associated_data=ad)
 
     assert plaintext == decrypted_text
 
-    # AES-OCB3 mode
-    key = AESOCB3.generate_key(bit_length=128)    
+    # AES-OCB3 mode, defined in RFC 7253
+    key = AESOCB3.generate_key(bit_length=128)          # Key could be 128, 192 or 256 bits
     aesocb3 = AESOCB3(key)
 
-    ciphertext = aesocb3.encrypt(nonce=nonce, data=plaintext, associated_data=ad)
+    ciphertext = aesocb3.encrypt(nonce=nonce, data=plaintext, associated_data=ad)       # nonce: 12-15 bytes
     print("Ciphertext using AES-OCB3 (hex): ", ciphertext.hex())
     assert len(plaintext) + 16 == len(ciphertext)       
 
@@ -51,11 +52,12 @@ if __name__ == '__main__':
 
     assert plaintext == decrypted_text
 
-    # AES-CCM mode
-    key = AESCCM.generate_key(bit_length=128)    
+    # AES-CCM mode, Counter with CBC-MAC (CCM) (specified in RFC 3610).
+    key = AESCCM.generate_key(bit_length=128, tag_length=16)                    # 128, 192, or 256-bit key.
+                                                                                # tag lengths are 4, 6, 8, 10, 12, 14, and 16 (recommneded).
     aesccm = AESCCM(key)
 
-    ciphertext = aesccm.encrypt(nonce=nonce, data=plaintext, associated_data=ad)
+    ciphertext = aesccm.encrypt(nonce=nonce, data=plaintext, associated_data=ad)    # nonce: 7 and 13 bytes
     print("Ciphertext using AES-CCM (hex): ", ciphertext.hex())
     assert len(plaintext) + 16 == len(ciphertext)       
 
