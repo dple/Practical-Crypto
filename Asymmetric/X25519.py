@@ -48,6 +48,10 @@ def load_public_key(public_pem):
     return serialization.load_pem_public_key(public_pem)
 
 def derive_shared_key(private_key, peer_public_key):
+    '''
+    DH shared key is calculated as g^private_key * peer_public_key. 
+    The difficulty is based on the CDH assumption. 
+    '''
     return private_key.exchange(peer_public_key)
        
 
@@ -71,6 +75,10 @@ if __name__ == '__main__':
     shared_key_B = derive_shared_key(private_key_B, public_key_A)
 
     assert shared_key_A == shared_key_B, "Shared secrets do not match!"
+    
+    ''' One should not use directly exchanged key from DH protocol, but have to 
+        use a Key Derivation Function, e.g., HKDF, to derive the common key
+    '''
     derived_key = HKDF(
         algorithm=hashes.SHA256(), 
         length=32, 
