@@ -1,5 +1,6 @@
 import os 
 from math import gcd 
+import random
 
 p = 115792089210356248762697446949407573530086143415290314195533631308867097853951
 a = -3
@@ -66,7 +67,7 @@ def mod_neg(x):
     return p - mod(x)
 
 def mod_inv(x):
-    return mod_inv_ct(x, p)
+    return mod_inv_ct(mod(x), p)
 
 def mod_rand():
     r = os.urandom(32)
@@ -125,20 +126,70 @@ def pt_add(P, Q):
 
     return add_x, add_y
 
+def invert(Q):
+    "Compute the inverse of a point Q on the P-256 curve."
+    x, y = Q
+    return mod(x), mod_neg(y)
 
-def scalar_mult(d, P):
+def add(Q1, Q2):
+    "Add points Q1 and Q2 on the P-256 curve."
+    if Q1 == O:
+        return Q2
+
+    if Q2 == O:
+        return Q1
+
+    if Q1 == invert(Q2):
+        return O
+
+    x1, y1 = Q1
+    x2, y2 = Q2
+
+    if Q1 == Q2:
+        t1 = mod_mul(x1, x1)
+        t1 = mod_mul(t1, 3)
+        t1 = mod_add(t1, a)
+        t2 = mod_mul(2, y1)
+        t2 = mod_inv(t2)
+        m = mod_mul(t1, t2)
+    else:
+        t1 = mod_sub(y2, y1)
+        t2 = mod_sub(x2, x1)
+        t2 = mod_inv(t2)
+        m = mod_mul(t1, t2)
+
+    x3 = mod_mul(m, m)
+    x3 = mod_sub(x3, x1)
+    x3 = mod_sub(x3, x2)
+    y3 = mod_sub(x1, x3)
+    y3 = mod_mul(y3, m)
+    y3 = mod_sub(y3, y1)
+
+    return x3, y3
+
+def scalar_mult(d, Q):
     # Regular right-to-left scalar multiplication 
     if d == 0:
         return O
-    
+    """
     R0, R1 = O, O       # R1 returns the result 
     while d > 0:
-        bit = d%2 
+        bit = d * 1 
         R0, R1 = (R0, pt_add(R1, P)) if bit else (pt_add(R0, P), R1)
         P = pt_dbl(P)
         d >>= 1
 
     return R1
+    """
+    R = O
+
+    while d > 0:
+        if d & 1:
+            R = add(R, Q)
+        Q = add(Q, Q)
+        d = (d >> 1)
+
+    return R
 
 # Scalar multiplication due to Montgomery ladder 
 def montgomery_ladder(d, P):
@@ -153,8 +204,31 @@ def montgomery_ladder(d, P):
     #assert R1 == pt_add(R0, P)    
     return R0
 
-print(scalar_mult(17, G))
-print(montgomery_ladder(17, G))
+# Generate a key pair 
+def genkey():
+    # Get a random number as a private key
+    d = os.urandom(32)          # 32 bytes <--> 256 bits key 
+    d = mod(int.from_bytes(d, 'big'))
+    P = montgomery_ladder(d, G)
+
+    return d, P
+
+def ecdh(dA, PubB):
+    Rshared = scalar_mult(dA, PubB) #montgomery_ladder(dA, PubB)
+    xshared = Rshared[0]
+    return xshared.to_bytes(32, 'big')
+
+
+privA, PubA = genkey()
+privB, PubB = genkey()
+
+sharedECDHA = ecdh(privA, PubB)
+sharedECDHB = ecdh(privB, PubA)
+
+print(sharedECDHA)
+print(sharedECDHB)
+assert sharedECDHA == sharedECDHB
+
 #x, y = G
 #print(x)
 #print(y)

@@ -6,6 +6,8 @@ For example: if k = 3, then 'a' -> 'd'
 class CaesarCipher:
     lower = 'abcdefghijklmnopqrstuvwxyz' 
     upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    cipher_in = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz '
+    cipher_out = 'XYZABCDEFGHIJKLMNOPQRSTUVWxyzabcdefghijklmnopqrstuvw '    
 
     def __init__(self, k):
         self.k = k
@@ -33,11 +35,19 @@ class CaesarCipher:
                 res += c
         return res
     
+    def cipher(self, plaintext):
+        # Using map, built-in functional function in Python
+        return ''.join(map(lambda x: self.cipher_out[self.cipher_in.index(x)], plaintext))
+    
+    def decipher(self, ciphertext):
+        # Using map, built-in functional function in Python
+        return ''.join(map(lambda x: self.cipher_in[self.cipher_out.index(x)], ciphertext))
+
 
 if __name__ == '__main__':
     caesar = CaesarCipher(-4)
     plaintext = "The is a clear text"
-    ciphertext = caesar.encrypt(plaintext)
+    ciphertext = caesar.cipher(plaintext)  # caesar.encrypt(plaintext)
     print("Encrypted message:", ciphertext)
-    decrypted = caesar.decrypt(ciphertext)
+    decrypted = caesar.decipher(ciphertext)  # caesar.decrypt(ciphertext)
     print("Decrypted message:", decrypted)

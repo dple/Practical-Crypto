@@ -37,7 +37,7 @@ class Solution:
         return res
 
 if __name__ == '__main__':
-    s = "3[a2[b3[c]]]" # "100[leetcode]" #"3[a]2[bc]" #"2[abc]3[cd]ef" # "abc3[cd]xyz" #           
+    s = "3[a2[bd3[c]]]" # "100[leetcode]" #"3[a]2[bc]" #"2[abc]3[cd]ef" # "abc3[cd]xyz" #           
 
     sol = Solution()
 

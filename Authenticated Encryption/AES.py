@@ -53,8 +53,8 @@ if __name__ == '__main__':
     assert plaintext == decrypted_text
 
     # AES-CCM mode, Counter with CBC-MAC (CCM) (specified in RFC 3610).
-    key = AESCCM.generate_key(bit_length=128, tag_length=16)                    # 128, 192, or 256-bit key.
-                                                                                # tag lengths are 4, 6, 8, 10, 12, 14, and 16 (recommneded).
+    key = AESCCM.generate_key(bit_length=128)               # 128, 192, or 256-bit key.
+                                                            # tag lengths are 4, 6, 8, 10, 12, 14, and 16 (recommneded).
     aesccm = AESCCM(key)
 
     ciphertext = aesccm.encrypt(nonce=nonce, data=plaintext, associated_data=ad)    # nonce: 7 and 13 bytes
